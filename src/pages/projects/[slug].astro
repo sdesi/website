@@ -186,20 +186,22 @@ const blocks = project.blocks ?? [];
             return;
           }
 
-          // ДЕСКТОП: вылет в нужную сторону без скролла
-          const containerWidth = el.clientWidth;
-          const imgWidth = img.getBoundingClientRect().width;
+            // ДЕСКТОП: вылет в нужную сторону без скролла
+            // ВАЖНО: используем только layout-ширины (без учёта scale)
+            const containerWidth = el.clientWidth;     // ширина колонки ДО трансформации
+            const imgWidth = img.clientWidth;          // ширина картинки ДО трансформации
 
-          if (imgWidth <= containerWidth) return;
+            if (imgWidth <= containerWidth) return;
 
-          if (side === "right") {
+            if (side === "right") {
             // wide выходит вправо: левый край по колонке
             img.style.transform = "translateX(0)";
-          } else {
+            } else {
             // wide выходит влево: правый край по колонке
-            const shift = containerWidth - imgWidth; // отрицательное
+            const shift = containerWidth - imgWidth; // отрицательное число
             img.style.transform = `translateX(${shift}px)`;
-          }
+            }
+
         });
     }
 

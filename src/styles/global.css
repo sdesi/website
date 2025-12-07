@@ -37,8 +37,14 @@ body {
   font-smooth: never;
   padding: var(--page-padding-x);
   width: 100%;
-  max-width: 393px;
   margin: 0 auto;
+}
+
+@media screen and (min-width: 770px) {
+  body {
+    max-width: 397px;
+  }
+  
 }
 
 main {
@@ -519,13 +525,12 @@ body::-webkit-scrollbar {
 }
 
 /* Телефон / узкие экраны */
-@media (max-width: 393px) {
-  /* Локальный горизонтальный скролл только у wide-блока */
+@media (max-width: 768px) {
+
   .project-block-wide__scroller {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 
-    /* Ширина ровно по экрану, независимо от ширины колонки */
     position: relative;
     width: 100vw;
     left: 50%;
@@ -533,20 +538,20 @@ body::-webkit-scrollbar {
     margin-left: -50vw;
     margin-right: -50vw;
 
-    /* сохраняем «внутренние» паддинги страницы */
     padding-left: 20px;
     padding-right: 20px;
   }
 
-  /* На мобиле wide шире экрана, чтобы был запас для скролла */
   .project-block-wide__image {
     min-width: 140vw;
     border: var(--main-border);
   }
 }
 
+
 /* ДЕСКТОП: wide без скролла, вылет за рамки колонки */
 @media (min-width: 769px) {
+
   .project-block-wide__scroller {
     overflow-x: visible;
     overflow-y: visible;
@@ -591,45 +596,5 @@ body::-webkit-scrollbar {
 
 
 
-/* Специально для экранов шире колонки, но ещё мобильных:
-   ширина экрана от 393px до 768px */
-@media (min-width: 393px) and (max-width: 768px) {
-  /* wide с выступом вправо */
-  .project-block--wide-right .project-block-wide__scroller {
-    /* 
-      Паддинг справа:
-      20px базовых + половина "лишней" ширины экрана относительно 393px
-    */
-    padding-right: calc(20px + (100vw - 393px) / 2);
-    /* Маргин зеркальный, чтобы блок мог уходить под этот паддинг */
-    margin-right: calc(-1 * (20px + (100vw - 393px) / 2));
-  }
 
-  /* wide с выступом влево */
-  .project-block--wide-left .project-block-wide__scroller {
-    padding-left: calc(20px + (100vw - 393px) / 2);
-    margin-left: calc(-1 * (20px + (100vw - 393px) / 2));
-  }
-}
 
-/* Экран шире колонки, но ещё мобильный: 393–768px */
-@media (min-width: 393px) and (max-width: 768px) {
-  /* WIDE с ВЫСТУПОМ ВЛЕВО */
-  .project-block--wide-left .project-block-wide__scroller {
-    /* 
-      СТОРОНА ВЫСТУПА (левая):
-      формула = 20px базовых + половина "лишней" ширины экрана относительно 393px
-    */
-    padding-left: calc(20px + (100vw - 393px) / 2);
-    margin-left: calc(-1 * (20px + (100vw - 393px) / 2));
-
-    /*
-      ПРОТИВОПОЛОЖНАЯ СТОРОНА (правая):
-      оставляем привычный выезд под паддинг,
-      чтобы при скролле wide мог прятаться и с этой стороны.
-      Это важно, чтобы не резался "квадратом".
-    */
-    margin-right: -20px;
-    padding-right: 20px;
-  }
-}

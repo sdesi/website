@@ -51,13 +51,6 @@ export const projects: Project[] = [
       },
 
       {
-        type: "image",
-        title: "Главный экран сайта",
-        caption: "Квадратный блок с макетом.",
-        src: "img/detali/wide.png"
-      },
-
-      {
         type: "wide-image",
         title: "Большая полоса изображений",
         caption: "Широкий блок, скроллится только внутри себя.",
