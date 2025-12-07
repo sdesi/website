@@ -35,7 +35,7 @@ body {
   line-height: 95%;
   -webkit-font-smoothing: none;
   font-smooth: never;
-  padding: 20px;
+  padding: var(--page-padding-x);
   width: 100%;
   max-width: 393px;
   margin: 0 auto;
@@ -288,6 +288,35 @@ main {
   flex: 0 0 auto;
 }
 
+/* Кнопка "Назад ко всем проектам" — ссылка, оформленная как кнопка */
+a.back {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 5px;
+  width: 100%;
+  height: 37px;
+  border: var(--main-border);
+  background: transparent;
+  cursor: pointer;
+  flex: 0 0 auto;
+  text-decoration: none;
+  color: black;        /* обычное состояние — ЧЁРНЫЙ */
+  user-select: none;   /* нельзя выделять текст */
+}
+
+/* отдельно прибиваем цвет для посещённой ссылки */
+a.back:visited {
+  color: black;
+}
+
+.back-icon {
+  width: 10px;
+  height: 10px;
+  align-self: flex-start;
+}
+
+
 /* Выпадающее меню — скрытое состояние */
 .filter-menu {
   width: 100%;
@@ -339,9 +368,15 @@ main {
 }
 
 
+
 /* -----------------------------------------------
    ПРЕВЬЮ ПРОЕКТОВ
    ----------------------------------------------- */
+.project-content,
+.project-block {
+  overflow: visible;
+}
+
 .projects-grid {
   display: inherit;
   flex-direction: inherit;
@@ -424,6 +459,112 @@ main {
 }
 
 
+/* Скрываем полосы прокрутки, но оставляем скролл */
+
+/* Firefox */
+html {
+  scrollbar-width: none; /* не рисовать полосу */
+}
+
+/* IE / старый Edge */
+body {
+  -ms-overflow-style: none; /* тоже скрыть полосу */
+}
+
+/* Chrome, Safari, новый Edge и др. WebKit */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* -----------------------------------------------
+   ШИРОКИЙ БЛОК В ПРОЕКТЕ
+   ----------------------------------------------- */
+
+/* Обычные (квадратные) картинки:
+   ширина по колонке, высота задаётся через переменную */
+.project-block__image {
+  display: block;
+  width: 100%;
+  height: var(--project-image-height, auto);
+  object-fit: cover;
+}
+
+/* WIDE-картинки:
+   высота такая же, как у квадратных блоков,
+   ширина вычисляется по аспект-ратио 16:9 */
+.project-block-wide__image {
+  display: block;
+  height: var(--project-image-height, auto); /* ФИКСИРОВАННАЯ высота как у квадрата */
+  width: auto;                               /* ширина считается от height */
+  max-width: none;
+  aspect-ratio: 16 / 9;                      /* width = height * 16/9 */
+  object-fit: cover;
+  border: var(--main-border);
+}
+
+/* Скроллер wide-блока по умолчанию:
+   на десктопе без скролла, на мобиле — переопределяется ниже */
+.project-block-wide__scroller {
+  overflow-x: visible;
+  overflow-y: hidden;
+  scrollbar-width: none;      /* Firefox — не рисуем полосу */
+  -ms-overflow-style: none;   /* старый Edge/IE */
+}
+
+/* WebKit (iOS Safari, мобильный Chrome и т.п.) */
+.project-block-wide__scroller::-webkit-scrollbar {
+  display: none;
+}
+
+/* Телефон / узкие экраны */
+@media (max-width: 768px) {
+  /* Локальный горизонтальный скролл только у wide-блока */
+  .project-block-wide__scroller {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    /* full-bleed в обе стороны относительно паддингов страницы */
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* На мобиле wide шире экрана, чтобы был запас для скролла */
+  .project-block-wide__image {
+    min-width: 140vw;
+  }
+}
+
+/* ДЕСКТОП: wide без скролла, вылет за рамки колонки */
+@media (min-width: 769px) {
+  .project-block-wide__scroller {
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+
+  /* На десктопе размер wide-картинки:
+     высота остаётся = var(--project-image-height),
+     ширину считает aspect-ratio 16:9 */
+  .project-block-wide__image {
+    width: auto;
+    max-width: none;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* -----------------------------------------------
@@ -439,24 +580,3 @@ main {
 }
 }
 
-/* ЛИКВИДАЦИЯ ВОЗМОЖНОСТИ ВЫДЕЛИТЬ ТЕКСТ ПРИ ПЕРЕМЕЩЕНИИ ПО ДОСКЕ */
-
-/* Во время перетаскивания доски отключаем выделение и меняем курсор только у самой доски */
-body.is-dragging-board .project-board-background,
-body.is-dragging-board .project-board-background * {
-  user-select: none;
-  cursor: grabbing;
-}
-
-
-/* Скрыть скроллбар, но оставить прокрутку */
-html.no-scrollbar, 
-html.no-scrollbar body {
-  scrollbar-width: none;    /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
-}
-
-html.no-scrollbar::-webkit-scrollbar,
-html.no-scrollbar body::-webkit-scrollbar {
-  display: none;            /* Chrome/Safari/Opera */
-}

@@ -1,0 +1,209 @@
+---
+// src/pages/projects/[slug].astro
+
+import MainLayout from "../../layouts/MainLayout.astro";
+import { projects } from "../../data/projects";
+
+const base = import.meta.env.BASE_URL;
+
+// динамические пути для Astro
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const project = projects.find((p) => p.slug === slug);
+
+if (!project) {
+  throw new Error(`Проект с slug "${slug}" не найден`);
+}
+
+const blocks = project.blocks ?? [];
+---
+
+<MainLayout title={project.title}>
+  <a href={base} class="back">
+    <span class="back-icon">
+      <img src={`${base}icon-back.svg`} alt="" />
+    </span>
+    <span class="filter-toggle-label">
+      Назад ко всем проектам
+    </span>
+  </a>
+
+  {/* Превью-блок, как на главной */}
+  <section class="project-hero">
+    <article class="project-card project-card--hero">
+      <div class="project-link project-link--hero">
+        <div class="project-image-wrapper project-image-wrapper--hero">
+          <img
+            src={`${base}${project.cover}`}
+            alt={project.title}
+            class="project-cover project-cover--hero"
+          />
+        </div>
+
+        <div class="project-text project-text--hero">
+          <div class="project-description">
+            <img
+              src={`${base}icon-info.svg`}
+              alt=""
+              class="project-info-icon"
+            />
+            {project.short}
+          </div>
+          <div class="project-title">
+            {project.title}
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  {/* Блоки контента из projects.ts */}
+  <section class="project-content">
+    {blocks && blocks.length === 0 && (
+      <p>
+        Для этого проекта пока нет контент-блоков. Добавь массив{" "}
+        <code>blocks</code> в <code>src/data/projects.ts</code>.
+      </p>
+    )}
+
+    {blocks &&
+      blocks.length > 0 &&
+      blocks.map((block) =>
+        block.type === "text" ? (
+          <article class="project-block project-block--text">
+            {block.title && (
+              <h2 class="project-block__title">{block.title}</h2>
+            )}
+            <p class="project-block__text">{block.body}</p>
+          </article>
+        ) : block.type === "image" ? (
+          <figure class="project-block project-block--image">
+            <img
+              src={`${base}${block.src}`}
+              alt={block.title ?? project.title}
+              class="project-block__image"
+            />
+            {(block.title || block.caption) && (
+              <figcaption class="project-block__caption">
+                {block.title && (
+                  <div class="project-block__caption-title">
+                    {block.title}
+                  </div>
+                )}
+                {block.caption && (
+                  <div class="project-block__caption-text">
+                    {block.caption}
+                  </div>
+                )}
+              </figcaption>
+            )}
+          </figure>
+        ) : block.type === "wide-image" ? (
+          <figure
+            class={`project-block project-block--image project-block--wide project-block--wide-${
+              block.side ?? "right"
+            }`}
+          >
+            <div
+              class="project-block-wide__scroller"
+              data-side={block.side ?? "right"}
+            >
+              <img
+                src={`${base}${block.src}`}
+                alt={block.title ?? project.title}
+                class="project-block-wide__image"
+              />
+            </div>
+
+            {(block.title || block.caption) && (
+              <figcaption class="project-block__caption">
+                {block.title && (
+                  <div class="project-block__caption-title">
+                    {block.title}
+                  </div>
+                )}
+                {block.caption && (
+                  <div class="project-block__caption-text">
+                    {block.caption}
+                  </div>
+                )}
+              </figcaption>
+            )}
+          </figure>
+        ) : null
+      )}
+  </section>
+
+  <script is:inline>
+    function updateProjectImageHeight() {
+      // Берём первую обычную картинку проекта как эталон
+      const square = document.querySelector(".project-block__image");
+      if (!square) return;
+
+      // Для квадратных: ширина = высота → берём ширину
+      const size = square.clientWidth;
+
+      // Эту высоту задаём всем картинкам проекта
+      document.documentElement.style.setProperty(
+        "--project-image-height",
+        size + "px"
+      );
+    }
+
+    function setupWideBlocks() {
+      // 1. Обновляем высоту картинок
+      updateProjectImageHeight();
+
+      const isDesktop = window.innerWidth >= 769;
+
+      document
+        .querySelectorAll(".project-block-wide__scroller")
+        .forEach((el) => {
+          const img = el.querySelector(".project-block-wide__image");
+          if (!img) return;
+
+          // Сбрасываем прошлые сдвиги и скролл
+          img.style.transform = "";
+          el.scrollLeft = 0;
+
+          const side = el.getAttribute("data-side") || "right";
+
+          if (!isDesktop) {
+            // МОБИЛА: стартовая позиция скролла по side
+            const maxScroll = el.scrollWidth - el.clientWidth;
+            if (maxScroll <= 0) return;
+
+            if (side === "right") {
+              el.scrollLeft = 0;
+            } else {
+              el.scrollLeft = maxScroll;
+            }
+            return;
+          }
+
+          // ДЕСКТОП: вылет в нужную сторону без скролла
+          const containerWidth = el.clientWidth;
+          const imgWidth = img.getBoundingClientRect().width;
+
+          if (imgWidth <= containerWidth) return;
+
+          if (side === "right") {
+            // wide выходит вправо: левый край по колонке
+            img.style.transform = "translateX(0)";
+          } else {
+            // wide выходит влево: правый край по колонке
+            const shift = containerWidth - imgWidth; // отрицательное
+            img.style.transform = `translateX(${shift}px)`;
+          }
+        });
+    }
+
+    window.addEventListener("load", setupWideBlocks);
+    window.addEventListener("resize", setupWideBlocks);
+  </script>
+</MainLayout>

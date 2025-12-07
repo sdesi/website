@@ -1,3 +1,4 @@
 :root {
-    --main-border: 1.2px solid black
+    --main-border: 1.2px solid black;
+    --page-padding-x: 20px;
 }
