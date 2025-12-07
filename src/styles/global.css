@@ -6,11 +6,13 @@
   src: url("../fonts/pixel-ultima-regular.ttf") format("truetype");
   font-weight: 400;
 }
+
 @font-face {
   font-family: "Pixel Ultima";
   src: url("../fonts/pixel-ultima-bold.ttf") format("truetype");
   font-weight: 700;
 }
+
 @font-face {
   font-family: "C0591";
   src: url("../fonts/c0591.ttf") format("truetype");
@@ -19,24 +21,27 @@
 
 
 /* -----------------------------------------------
-   БАЗОВЫЕ СТИЛИ СТРАНИЦЫ
+   ГЛОБАЛ: HTML, BODY, SCROLLBARS, SCALE
    ----------------------------------------------- */
+
+:root {
+  /* базовое значение, при десктопе переопределяется */
+  --page-scale: 1;
+}
+
 html {
   font-size: 17px;
   width: 100%;
   background-color: #F4F4F4;
   font-family: "Pixel Ultima", sans-serif;
   overflow-x: hidden;
+  scrollbar-width: none; /* Firefox: не рисовать полосу */
 }
 
-@media (min-width: 950px) {
-  :root {
-    --page-scale: clamp(
-      1,
-      calc(1 + 0.3 * ((100vw - 950px) / (1920px - 950px))),
-      1.3
-    );
-  }
+/* Chrome, Safari, новый Edge и др. WebKit */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
 
 body {
@@ -49,20 +54,8 @@ body {
   padding: var(--page-padding-x);
   width: 100%;
   margin: 0 auto;
-}
-
-@media (min-width: 950px) {
-  body {
-    transform: scale(var(--page-scale));
-    transform-origin: top center;
-  }
-}
-
-@media screen and (min-width: 770px) {
-  body {
-    max-width: 397px;
-  }
-  
+  caret-color: transparent !important; /* убираем мигающую каретку */
+  -ms-overflow-style: none;            /* IE / старый Edge: скрыть полосу */
 }
 
 main {
@@ -72,18 +65,41 @@ main {
   margin-bottom: 75px;
 }
 
+/* Масштабирование контента при широких экранах */
+@media (min-width: 950px) {
+  :root {
+    --page-scale: clamp(
+      1,
+      calc(1 + 0.3 * ((100vw - 950px) / (1920px - 950px))),
+      1.3
+    );
+  }
+
+  body {
+    transform: scale(var(--page-scale));
+    transform-origin: top center;
+  }
+}
+
+/* Ограничение ширины колонки на десктопе */
+@media screen and (min-width: 770px) {
+  body {
+    max-width: 397px;
+  }
+}
+
 
 /* -----------------------------------------------
    ХЭДЕР
    ----------------------------------------------- */
 .logo {
-  transform: scale(1.02);
+  transform: scale(1.08);
   padding-bottom: 17px;
 }
 
 .nav {
   font-family: "C0591", sans-serif;
-  font-size: 21px;
+  font-size: 23px;
   display: flex;
   position: absolute;
 }
@@ -94,11 +110,10 @@ main {
 
 .nav-link.active {
   text-transform: uppercase;
-
 }
 
 .nav-portfolio {
-  transform: translateY(12px);
+  transform: translateY(0px);
   text-decoration: none;
 }
 
@@ -108,17 +123,17 @@ main {
 }
 
 .nav-who::after {
-    content: "";
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    margin-left: -5px;
-    background-image: url('icon-enter.svg'); 
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    vertical-align: middle;
-    transform: translateY(-1px);
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-left: -5px;
+  background-image: url("icon-enter.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  transform: translateY(-1px);
 }
 
 .header-text {
@@ -132,7 +147,8 @@ main {
 }
 
 .header-tg-icon {
-  /* display: inline-flex;
+  /* старый вариант с иконкой:
+  display: inline-flex;
   align-items: center;
   height: 26px;
   width: 30px;
@@ -140,13 +156,15 @@ main {
   background-repeat: no-repeat;
   background-position: right center;
   background-size: 26px;
-  transform: translateY(7px) translateX(-6px); */
+  transform: translateY(7px) translateX(-6px);
+  */
   color: blue !important;
 }
 
 .clock {
   width: 75px;
 }
+
 
 /* -----------------------------------------------
    ПИКСЕЛЬНЫЕ ЧАСЫ 75×75
@@ -178,12 +196,7 @@ main {
   pointer-events: none;
 }
 
-/* Позиции цифр (см. ASCII-схему в документации)
-   1я строка:  _ 11 12  1 _
-   2я строка: 10  _  _  _ 2
-   3я строка:  9  _  _  _ 3
-   4я строка:  8  _  _  _ 4
-   5я строка:  _  7  6  5 _ */
+/* Позиции цифр */
 .cell-11 { grid-row: 1; grid-column: 2; }
 .cell-12 { grid-row: 1; grid-column: 3; }
 .cell-1  { grid-row: 1; grid-column: 4; }
@@ -260,7 +273,11 @@ main {
   width: 100%;
   height: 1149px;
   top: 0;
-  background: linear-gradient(180deg, rgba(255, 248, 59, 0.27) 0%, rgba(255, 255, 255, 0.27) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 248, 59, 0.27) 0%,
+    rgba(255, 255, 255, 0.27) 100%
+  );
   filter: blur(120px);
   z-index: -1;
   display: none;
@@ -268,7 +285,7 @@ main {
 
 
 /* -----------------------------------------------
-   ФИЛЬТР ПРОЕКТОВ (dropdown)
+   ФИЛЬТР ПРОЕКТОВ / КНОПКА НАЗАД
    ----------------------------------------------- */
 .filter {
   display: flex;
@@ -287,6 +304,7 @@ main {
 .cart-cart-icon {
   height: 11px;
 }
+
 .cart-ruble-icon {
   height: 13px;
 }
@@ -370,16 +388,16 @@ a.back:visited {
 }
 
 .filter-option:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .filter-option.active {
-  background: rgba(255,255,255,0.16);
+  background: rgba(255, 255, 255, 0.16);
   display: none; /* скрываем активный пункт, т.к. он уже в кнопке */
 }
 
 /* Иконка в кнопке фильтра */
-.filter-toggle-icon, 
+.filter-toggle-icon,
 .filter-toggle-icon * {
   width: 10px;
   height: 10px;
@@ -392,13 +410,32 @@ a.back:visited {
 }
 
 
-
 /* -----------------------------------------------
-   ПРЕВЬЮ ПРОЕКТОВ
+   ПРЕВЬЮ И КОНТЕНТ ПРОЕКТОВ
    ----------------------------------------------- */
 .project-content,
 .project-block {
   overflow: visible;
+}
+
+.project-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.project-block {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* переносы слов в текстовых блоках проекта */
+.project-block p {
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .projects-grid {
@@ -427,7 +464,7 @@ a.back:visited {
   text-align: right;
   text-decoration: underline;
   text-underline-offset: 2px;
-  text-decoration-thickness: 1.5px;
+  text-decoration-thickness: 1px;
 }
 
 .project-description {
@@ -439,66 +476,6 @@ a.back:visited {
 
 .project-info-icon {
   align-self: flex-start;
-}
-
-/* ПРОЕКТ */
-
-.project-board-background {
-  position: fixed;
-  inset: 0;
-  z-index: -1; /* фон */
-  overflow: hidden;
-}
-
-.project-board {
-  width: 100%;
-  height: 100%;
-}
-
-.project-board-inner {
-  position: absolute;
-  transform-origin: top left;
-}
-
-/* блоки внутри доски */
-.board-block {
-  position: absolute;
-  pointer-events: none; /* доска фон, не перекрывает контент */
-}
-
-.board-image {
-  border: var(--main-border);
-}
-
-.board-text {
-  padding: 5px;
-  background: #f4f4f4;
-  border: var(--main-border);
-}
-
-/* контент проекта поверх доски */
-.project-content {
-  position: relative;
-  z-index: 5;
-}
-
-
-/* Скрываем полосы прокрутки, но оставляем скролл */
-
-/* Firefox */
-html {
-  scrollbar-width: none; /* не рисовать полосу */
-}
-
-/* IE / старый Edge */
-body {
-  -ms-overflow-style: none; /* тоже скрыть полосу */
-}
-
-/* Chrome, Safari, новый Edge и др. WebKit */
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-  display: none;
 }
 
 
@@ -520,7 +497,7 @@ body::-webkit-scrollbar {
    ширина вычисляется по аспект-ратио 16:9 */
 .project-block-wide__image {
   display: block;
-  height: var(--project-image-height, auto); /* ФИКСИРОВАННАЯ высота как у квадрата */
+  height: var(--project-image-height, auto); /* фиксированная высота как у квадрата */
   width: auto;                               /* ширина считается от height */
   max-width: none;
   aspect-ratio: 16 / 9;                      /* width = height * 16/9 */
@@ -542,9 +519,33 @@ body::-webkit-scrollbar {
   display: none;
 }
 
+
+/* -----------------------------------------------
+   НЕВЫДЕЛЯЕМЫЕ БЛОКИ (КАРТИНКИ ПРОЕКТА)
+   ----------------------------------------------- */
+
+/* Блоки с картинками в проекте: ничего не редактируем */
+.project-block--image,
+.project-block--image *,
+.project-block--wide,
+.project-block--wide * {
+  user-select: none;         /* нельзя выделять текст */
+  caret-color: transparent;  /* прячем текстовую каретку */
+}
+
+/* На всякий случай уберём outline при фокусе (клика) по figure */
+.project-block--image:focus,
+.project-block--wide:focus {
+  outline: none;
+}
+
+
+/* -----------------------------------------------
+   АДАПТИВ: ШИРОКИЕ БЛОКИ, МЕЛКИЕ ЭКРАНЫ
+   ----------------------------------------------- */
+
 /* Телефон / узкие экраны */
 @media (max-width: 768px) {
-
   .project-block-wide__scroller {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -566,10 +567,8 @@ body::-webkit-scrollbar {
   }
 }
 
-
 /* ДЕСКТОП: wide без скролла, вылет за рамки колонки */
 @media (min-width: 769px) {
-
   .project-block-wide__scroller {
     overflow-x: visible;
     overflow-y: visible;
@@ -584,35 +583,13 @@ body::-webkit-scrollbar {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* -----------------------------------------------
-   МАЛЕНЬКИЕ ЭКРАНЫ
-   ----------------------------------------------- */
+/* Очень маленькие экраны */
 @media (max-width: 351px) {
   html {
     font-size: 14px;
   }
 
   .nav-who {
-  transform: translateY(32px) translateX(-95px);
+    transform: translateY(32px) translateX(-95px);
+  }
 }
-}
-
-
-
-
-
