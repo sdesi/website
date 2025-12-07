@@ -519,15 +519,21 @@ body::-webkit-scrollbar {
 }
 
 /* Телефон / узкие экраны */
-@media (max-width: 768px) {
+@media (max-width: 393px) {
   /* Локальный горизонтальный скролл только у wide-блока */
   .project-block-wide__scroller {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 
-    /* full-bleed в обе стороны относительно паддингов страницы */
-    margin-left: -20px;
-    margin-right: -20px;
+    /* Ширина ровно по экрану, независимо от ширины колонки */
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+
+    /* сохраняем «внутренние» паддинги страницы */
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -535,6 +541,7 @@ body::-webkit-scrollbar {
   /* На мобиле wide шире экрана, чтобы был запас для скролла */
   .project-block-wide__image {
     min-width: 140vw;
+    border: var(--main-border);
   }
 }
 
@@ -567,6 +574,8 @@ body::-webkit-scrollbar {
 
 
 
+
+
 /* -----------------------------------------------
    МАЛЕНЬКИЕ ЭКРАНЫ
    ----------------------------------------------- */
@@ -580,3 +589,25 @@ body::-webkit-scrollbar {
 }
 }
 
+
+
+/* Специально для экранов шире колонки, но ещё мобильных:
+   ширина экрана от 393px до 768px */
+@media (min-width: 393px) and (max-width: 768px) {
+  /* wide с выступом вправо */
+  .project-block--wide-right .project-block-wide__scroller {
+    /* 
+      Паддинг справа:
+      20px базовых + половина "лишней" ширины экрана относительно 393px
+    */
+    padding-right: calc(20px + (100vw - 393px) / 2);
+    /* Маргин зеркальный, чтобы блок мог уходить под этот паддинг */
+    margin-right: calc(-1 * (20px + (100vw - 393px) / 2));
+  }
+
+  /* wide с выступом влево */
+  .project-block--wide-left .project-block-wide__scroller {
+    padding-left: calc(20px + (100vw - 393px) / 2);
+    margin-left: calc(-1 * (20px + (100vw - 393px) / 2));
+  }
+}

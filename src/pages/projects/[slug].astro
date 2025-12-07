@@ -155,10 +155,8 @@ const blocks = project.blocks ?? [];
       );
     }
 
-    function setupWideBlocks() {
-      // 1. Обновляем высоту картинок
-      updateProjectImageHeight();
-
+    function setupWideBlocks(options) {
+      const { resetMobileScroll } = options || {};
       const isDesktop = window.innerWidth >= 769;
 
       document
@@ -167,21 +165,23 @@ const blocks = project.blocks ?? [];
           const img = el.querySelector(".project-block-wide__image");
           if (!img) return;
 
-          // Сбрасываем прошлые сдвиги и скролл
+          // всегда сбрасываем transform (для десктопа)
           img.style.transform = "";
-          el.scrollLeft = 0;
 
           const side = el.getAttribute("data-side") || "right";
 
           if (!isDesktop) {
-            // МОБИЛА: стартовая позиция скролла по side
-            const maxScroll = el.scrollWidth - el.clientWidth;
-            if (maxScroll <= 0) return;
-
-            if (side === "right") {
-              el.scrollLeft = 0;
-            } else {
-              el.scrollLeft = maxScroll;
+            // МОБИЛА: только К ОДНОМУ моменту жизни мы трогаем scrollLeft —
+            // при первом запуске (load), когда resetMobileScroll === true.
+            if (resetMobileScroll) {
+              const maxScroll = el.scrollWidth - el.clientWidth;
+              if (maxScroll > 0) {
+                if (side === "right") {
+                  el.scrollLeft = 0;
+                } else {
+                  el.scrollLeft = maxScroll;
+                }
+              }
             }
             return;
           }
@@ -203,7 +203,21 @@ const blocks = project.blocks ?? [];
         });
     }
 
-    window.addEventListener("load", setupWideBlocks);
-    window.addEventListener("resize", setupWideBlocks);
+    window.addEventListener("load", () => {
+      updateProjectImageHeight();
+      // при первом заходе:
+      // — считаем высоту
+      // — задаём стартовый скролл для мобилы
+      setupWideBlocks({ resetMobileScroll: true });
+    });
+
+    window.addEventListener("resize", () => {
+      updateProjectImageHeight();
+      // при ресайзе:
+      // — высоту обновляем
+      // — НО scrollLeft на мобиле НЕ трогаем, чтобы не сбрасывать руками юзера
+      setupWideBlocks({ resetMobileScroll: false });
+    });
   </script>
 </MainLayout>
+
