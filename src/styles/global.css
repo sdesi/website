@@ -611,3 +611,25 @@ body::-webkit-scrollbar {
     margin-left: calc(-1 * (20px + (100vw - 393px) / 2));
   }
 }
+
+/* Экран шире колонки, но ещё мобильный: 393–768px */
+@media (min-width: 393px) and (max-width: 768px) {
+  /* WIDE с ВЫСТУПОМ ВЛЕВО */
+  .project-block--wide-left .project-block-wide__scroller {
+    /* 
+      СТОРОНА ВЫСТУПА (левая):
+      формула = 20px базовых + половина "лишней" ширины экрана относительно 393px
+    */
+    padding-left: calc(20px + (100vw - 393px) / 2);
+    margin-left: calc(-1 * (20px + (100vw - 393px) / 2));
+
+    /*
+      ПРОТИВОПОЛОЖНАЯ СТОРОНА (правая):
+      оставляем привычный выезд под паддинг,
+      чтобы при скролле wide мог прятаться и с этой стороны.
+      Это важно, чтобы не резался "квадратом".
+    */
+    margin-right: -20px;
+    padding-right: 20px;
+  }
+}
