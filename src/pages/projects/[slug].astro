@@ -64,24 +64,29 @@ const blocks = project.blocks ?? [];
 
   {/* Блоки контента из projects.ts */}
   <section class="project-content">
-    {blocks && blocks.length === 0 && (
-      <p>
-        Для этого проекта пока нет контент-блоков. Добавь массив{" "}
-        <code>blocks</code> в <code>src/data/projects.ts</code>.
-      </p>
-    )}
+  {blocks && blocks.length === 0 && (
+    <p>
+      Для этого проекта пока нет контент-блоков. Добавь массив{" "}
+      <code>blocks</code> в <code>src/data/projects.ts</code>.
+    </p>
+  )}
 
-    {blocks &&
-      blocks.length > 0 &&
-      blocks.map((block) =>
-        block.type === "text" ? (
+  {blocks &&
+    blocks.length > 0 &&
+    blocks.map((block) => {
+      if (block.type === "text") {
+        return (
           <article class="project-block project-block--text">
             {block.title && (
               <h2 class="project-block__title">{block.title}</h2>
             )}
             <p class="project-block__text">{block.body}</p>
           </article>
-        ) : block.type === "image" ? (
+        );
+      }
+
+      if (block.type === "image") {
+        return (
           <figure class="project-block project-block--image">
             <img
               src={`${base}${block.src}`}
@@ -103,15 +108,21 @@ const blocks = project.blocks ?? [];
               </figcaption>
             )}
           </figure>
-        ) : block.type === "wide-image" ? (
+        );
+      }
+
+      if (block.type === "wide-image") {
+        // side: "left" | "right" | "center" | undefined
+        // по умолчанию (undefined) — ПРАВЫЙ вылет
+        const side = block.side ?? "right";
+
+        return (
           <figure
-            class={`project-block project-block--image project-block--wide project-block--wide-${
-              block.side ?? "right"
-            }`}
+            class={`project-block project-block--image project-block--wide project-block--wide-${side}`}
           >
             <div
               class="project-block-wide__scroller"
-              data-side={block.side ?? "right"}
+              data-side={side}
             >
               <img
                 src={`${base}${block.src}`}
@@ -135,9 +146,12 @@ const blocks = project.blocks ?? [];
               </figcaption>
             )}
           </figure>
-        ) : null
-      )}
-  </section>
+        );
+      }
+
+      return null;
+    })}
+</section>
 
   <script is:inline>
     function updateProjectImageHeight() {
@@ -160,49 +174,47 @@ const blocks = project.blocks ?? [];
       const isDesktop = window.innerWidth >= 769;
 
       document
-        .querySelectorAll(".project-block-wide__scroller")
-        .forEach((el) => {
-          const img = el.querySelector(".project-block-wide__image");
-          if (!img) return;
+  .querySelectorAll(".project-block-wide__scroller")
+  .forEach((el) => {
+    const img = el.querySelector(".project-block-wide__image");
+    if (!img) return;
 
-          // всегда сбрасываем transform (для десктопа)
-          img.style.transform = "";
+    img.style.transform = "";
 
-          const side = el.getAttribute("data-side") || "right";
+    const side = el.getAttribute("data-side") || "right";
 
-          if (!isDesktop) {
-            // МОБИЛА: только К ОДНОМУ моменту жизни мы трогаем scrollLeft —
-            // при первом запуске (load), когда resetMobileScroll === true.
-            if (resetMobileScroll) {
-              const maxScroll = el.scrollWidth - el.clientWidth;
-              if (maxScroll > 0) {
-                if (side === "right") {
-                  el.scrollLeft = 0;
-                } else {
-                  el.scrollLeft = maxScroll;
-                }
-              }
-            }
-            return;
-          }
+    // НОВОЕ: center — никуда не вылезает и не скроллится
+    if (side === "center") {
+      if (!isDesktop && resetMobileScroll) {
+        el.scrollLeft = 0; // на мобиле просто в нуле
+      }
+      return;
+    }
 
-            // ДЕСКТОП: вылет в нужную сторону без скролла
-            // ВАЖНО: используем только layout-ширины (без учёта scale)
-            const containerWidth = el.clientWidth;     // ширина колонки ДО трансформации
-            const imgWidth = img.clientWidth;          // ширина картинки ДО трансформации
+    if (!isDesktop) {
+      if (resetMobileScroll) {
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (maxScroll > 0) {
+          el.scrollLeft = side === "right" ? 0 : maxScroll;
+        }
+      }
+      return;
+    }
 
-            if (imgWidth <= containerWidth) return;
+    // ДЕСКТОП: вылет только для left/right
+    const containerWidth = el.clientWidth;
+    const imgWidth = img.clientWidth;
 
-            if (side === "right") {
-            // wide выходит вправо: левый край по колонке
-            img.style.transform = "translateX(0)";
-            } else {
-            // wide выходит влево: правый край по колонке
-            const shift = containerWidth - imgWidth; // отрицательное число
-            img.style.transform = `translateX(${shift}px)`;
-            }
+    if (imgWidth <= containerWidth) return;
 
-        });
+    if (side === "right") {
+      img.style.transform = "translateX(0)";
+    } else {
+      const shift = containerWidth - imgWidth;
+      img.style.transform = `translateX(${shift}px)`;
+    }
+  });
+
     }
 
     window.addEventListener("load", () => {

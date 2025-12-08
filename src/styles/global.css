@@ -283,6 +283,14 @@ main {
   display: none;
 }
 
+h2 {
+  line-height: 1em;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: break-word;
+}
+
 
 /* -----------------------------------------------
    ФИЛЬТР ПРОЕКТОВ / КНОПКА НАЗАД
@@ -431,7 +439,7 @@ a.back:visited {
 }
 
 /* переносы слов в текстовых блоках проекта */
-.project-block p {
+.project-block {
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
@@ -472,12 +480,36 @@ a.back:visited {
   gap: 5px;
   color: black;
   align-self: flex-start;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .project-info-icon {
   align-self: flex-start;
 }
 
+/* wide center — НЕ ВЫСТУПАЕТ */
+.project-block--wide-center .project-block-wide__scroller {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+  overflow-x: hidden; /* он не скроллится */
+}
+
+/* картинка вписывается в колонку */
+.project-block--wide-center .project-block-wide__image {
+  width: 100%;
+  max-width: 100%;
+  height: var(--project-image-height);
+  object-fit: cover;
+}
+
+.project-block__caption-title {
+  font-weight: 700;
+}
 
 /* -----------------------------------------------
    ШИРОКИЙ БЛОК В ПРОЕКТЕ
@@ -533,7 +565,6 @@ a.back:visited {
   caret-color: transparent;  /* прячем текстовую каретку */
 }
 
-/* На всякий случай уберём outline при фокусе (клика) по figure */
 .project-block--image:focus,
 .project-block--wide:focus {
   outline: none;
@@ -565,6 +596,25 @@ a.back:visited {
     min-width: 140vw;
     border: var(--main-border);
   }
+
+  .project-block--wide-center .project-block-wide__scroller {
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: auto;
+
+      position: static;
+      width: auto;
+      left: auto;
+      right: auto;
+      margin-left: 0;
+      margin-right: 0;
+
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .project-block--wide-center .project-block-wide__image {
+      min-width: 100%;
+    }
 }
 
 /* ДЕСКТОП: wide без скролла, вылет за рамки колонки */
