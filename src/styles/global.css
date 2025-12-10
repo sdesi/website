@@ -116,6 +116,7 @@ main {
 .nav-portfolio {
   transform: translateY(10px);
   text-decoration: none;
+  display: none;
 }
 
 .nav-who {
