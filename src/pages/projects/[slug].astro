@@ -63,7 +63,7 @@ const blocks = project.blocks ?? [];
   </section>
 
   {/* Блоки контента из projects.ts */}
-  <section class="project-content">
+<section class="project-content">
   {blocks && blocks.length === 0 && (
     <p>
       Для этого проекта пока нет контент-блоков. Добавь массив{" "}
@@ -74,24 +74,72 @@ const blocks = project.blocks ?? [];
   {blocks &&
     blocks.length > 0 &&
     blocks.map((block) => {
+      // ---------- TEXT ----------
       if (block.type === "text") {
         return (
           <article class="project-block project-block--text">
             {block.title && (
               <h2 class="project-block__title">{block.title}</h2>
             )}
-            <p class="project-block__text">{block.body}</p>
+            {block.body && (
+              <p class="project-block__text">{block.body}</p>
+            )}
           </article>
         );
       }
 
+      // ---------- IMAGE (square / auto / wide) ----------
       if (block.type === "image") {
+        const side = block.side ?? "center";
+
+        // WIDE: left / right → выступающие блоки
+        if (side === "left" || side === "right") {
+          return (
+            <figure
+              class={`project-block project-block--image project-block--wide project-block--wide-${side}`}
+            >
+              <div
+                class="project-block-wide__scroller"
+                data-side={side}
+              >
+                <img
+                  src={`${base}${block.src}`}
+                  alt={block.title ?? project.title}
+                  class="project-block-wide__image"
+                />
+              </div>
+
+              {(block.title || block.caption) && (
+                <figcaption class="project-block__caption">
+                  {block.title && (
+                    <div class="project-block__caption-title">
+                      {block.title}
+                    </div>
+                  )}
+                  {block.caption && (
+                    <div class="project-block__caption-text">
+                      {block.caption}
+                    </div>
+                  )}
+                </figcaption>
+              )}
+            </figure>
+          );
+        }
+
+        // CENTER: обычная картинка в колонке
+        const heightMode = block.height ?? "square";
+        const imgClass =
+          heightMode === "auto"
+            ? "project-block__image project-block__image--auto"
+            : "project-block__image";
+
         return (
           <figure class="project-block project-block--image">
             <img
               src={`${base}${block.src}`}
               alt={block.title ?? project.title}
-              class="project-block__image"
+              class={imgClass}
             />
             {(block.title || block.caption) && (
               <figcaption class="project-block__caption">
@@ -111,9 +159,8 @@ const blocks = project.blocks ?? [];
         );
       }
 
-      if (block.type === "wide-image") {
-        // side: "left" | "right" | "center" | undefined
-        // по умолчанию (undefined) — ПРАВЫЙ вылет
+      // ---------- WIDE-VIDEO ----------
+      if (block.type === "wide-video") {
         const side = block.side ?? "right";
 
         return (
@@ -124,10 +171,13 @@ const blocks = project.blocks ?? [];
               class="project-block-wide__scroller"
               data-side={side}
             >
-              <img
+              <video
                 src={`${base}${block.src}`}
-                alt={block.title ?? project.title}
-                class="project-block-wide__image"
+                class="project-block-wide__image project-block-wide__video"
+                playsinline
+                muted
+                loop
+                preload="metadata"
               />
             </div>
 
@@ -149,9 +199,20 @@ const blocks = project.blocks ?? [];
         );
       }
 
+      // ---------- SPACER ----------
+      if (block.type === "spacer") {
+        const size = block.size ?? "medium";
+        return (
+          <div
+            class={`project-block project-block--spacer project-block--spacer-${size}`}
+          />
+        );
+      }
+
       return null;
     })}
 </section>
+
 
   <script is:inline>
     function updateProjectImageHeight() {
@@ -169,6 +230,7 @@ const blocks = project.blocks ?? [];
       );
     }
 
+    
     function setupWideBlocks(options) {
       const { resetMobileScroll } = options || {};
       const isDesktop = window.innerWidth >= 769;
@@ -233,5 +295,45 @@ const blocks = project.blocks ?? [];
       setupWideBlocks({ resetMobileScroll: false });
     });
   </script>
+
+  <script is:inline>
+  // Автозапуск / остановка wide-видео, когда блок виден / скрыт
+  (function () {
+    const videos = document.querySelectorAll(".project-block-wide__video");
+    if (!videos.length) return;
+
+    if (!("IntersectionObserver" in window)) {
+      // Если что — просто выходим, без автоплея
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target;
+          if (!(target instanceof HTMLVideoElement)) return;
+
+          if (entry.isIntersecting) {
+            // Блок в зоне видимости → запускаем без звука
+            target.muted = true;
+            target.play().catch(() => {});
+          } else {
+            // Блок ушёл из зоны видимости → пауза
+            target.pause();
+          }
+        });
+      },
+      {
+        threshold: 0.5, // минимум половина блока должна быть видна
+      }
+    );
+
+    videos.forEach((video) => {
+      observer.observe(video);
+    });
+  })();
+</script>
+
+
 </MainLayout>
 

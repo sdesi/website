@@ -1,3 +1,4 @@
+/* &shy; */
 /* -----------------------------------------------
    ШРИФТЫ
    ----------------------------------------------- */
@@ -99,7 +100,7 @@ main {
 
 .nav {
   font-family: "C0591", sans-serif;
-  font-size: 23px;
+  font-size: 27.5px;
   display: flex;
   position: absolute;
 }
@@ -113,7 +114,7 @@ main {
 }
 
 .nav-portfolio {
-  transform: translateY(0px);
+  transform: translateY(10px);
   text-decoration: none;
 }
 
@@ -459,7 +460,7 @@ a.back:visited {
   text-decoration: none;
 }
 
-.project-image-wrapper {
+.project-cover {
   border: var(--main-border);
 }
 
@@ -473,6 +474,7 @@ a.back:visited {
   text-decoration: underline;
   text-underline-offset: 2px;
   text-decoration-thickness: 1px;
+  line-height: 110%;
 }
 
 .project-description {
@@ -480,10 +482,10 @@ a.back:visited {
   gap: 5px;
   color: black;
   align-self: flex-start;
-  hyphens: auto;
+  /* hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
-  overflow-wrap: break-word;
+  overflow-wrap: break-word; */
 }
 
 .project-info-icon {
@@ -507,9 +509,52 @@ a.back:visited {
   object-fit: cover;
 }
 
+/* .project-block__caption {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+} */
+
+.project-block__caption-title ~ .project-block__caption-text {
+  margin-top: 10px;
+}
+
 .project-block__caption-title {
   font-weight: 700;
 }
+
+/* Квадратные картинки (как и было) */
+.project-block__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border: var(--main-border);
+}
+
+/* ДИНАМИЧЕСКАЯ высота: по ширине колонка, высота по изображению */
+.project-block__image--auto {
+  height: auto !important;          /* ключевой момент: не фиксируем высоту */
+  object-fit: contain;   /* или cover, если хочешь обрезку, но не обязательно */
+}
+
+
+.project-block--spacer {
+  width: 100%;
+}
+
+.project-block--spacer-small {
+  height: 10px;
+}
+
+.project-block--spacer-medium {
+  height: 20px;
+}
+
+.project-block--spacer-large {
+  height: 40px;
+}
+
 
 /* -----------------------------------------------
    ШИРОКИЙ БЛОК В ПРОЕКТЕ
@@ -561,7 +606,7 @@ a.back:visited {
 .project-block--image *,
 .project-block--wide,
 .project-block--wide * {
-  user-select: none;         /* нельзя выделять текст */
+  /* user-select: none;      */    /* нельзя выделять текст */
   caret-color: transparent;  /* прячем текстовую каретку */
 }
 
@@ -577,6 +622,10 @@ a.back:visited {
 
 /* Телефон / узкие экраны */
 @media (max-width: 768px) {
+  .nav {
+    font-size: 25.5px;
+  }
+
   .project-block-wide__scroller {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;

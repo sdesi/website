@@ -40,12 +40,12 @@ const isWhoActive = path.startsWith("/about");
           Портфолио
         </a>
 
-        <a
+        <!-- <a
           href="/about"
           class={`nav-link nav-who ${isWhoActive ? "active" : ""}`}
         >
           Кто я?
-        </a>
+        </a> -->
       </nav>
 
       <!-- Если НЕ страница проекта → показываем логотип + текст + часы -->
@@ -58,8 +58,8 @@ const isWhoActive = path.startsWith("/about");
             <div>
               <p>
                 <strong>ЗАО „ВыксаЖилСтройСервис“</strong><br />
-                г. о. г. Выкса, с. Мотмос,<br />
-                ул. Мироновка 36<br /><br />
+                Нижегородская обл., <br />
+                г. о. г. Выкса, с. Мотмос<br /><br />
                 <div>
                   <a class="header-tg-icon" href="tg.me">TELEGRAM</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   <a href="tel:+79994244242">+7 999 424-42-42</a>
@@ -98,9 +98,7 @@ const isWhoActive = path.startsWith("/about");
             <script src="/js/pixel-clock.js" defer></script>
           </div>
         </>
-
     </header>
-
     <main>
       <slot />
     </main>
