@@ -690,5 +690,6 @@ a.back:visited {
 
   .nav-who {
     transform: translateY(32px) translateX(-95px);
+    display: none;
   }
 }
