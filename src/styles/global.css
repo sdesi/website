@@ -356,6 +356,7 @@ a.back {
   text-decoration: none;
   color: black;        /* обычное состояние — ЧЁРНЫЙ */
   user-select: none;   /* нельзя выделять текст */
+  margin-bottom: 1px;
 }
 
 /* отдельно прибиваем цвет для посещённой ссылки */
@@ -464,6 +465,7 @@ a.back:visited {
 
 .project-cover {
   border: var(--main-border);
+  height: auto !important;
 }
 
 .project-text {
