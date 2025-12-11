@@ -49,7 +49,7 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    slug: "kultura",
+    slug: "культура",
     title: "Коллекция «КУЛЬТУРНАЯ СТОЛИЦА»",
     short: "Концепт; стиль; верстка",
     cover: "img/kultura/0.png",
@@ -242,7 +242,7 @@ export const projects: Project[] = [
   },
 
   {
-    slug: "detali",
+    slug: "детали",
     title: "ЖК «Детали»",
     short: "Концепт; дизайн и прототипирование; стандарт оформления",
     cover: "img/detali/60-optimized.webp",
@@ -351,7 +351,7 @@ export const projects: Project[] = [
   },
 
   {
-    slug: "max",
+    slug: "макс",
     title: "Навигация и дизайн ЖК «MAX»",
     short: "Стиль; навигация; мерч",
     cover: "img/max/0.png",
@@ -444,7 +444,7 @@ export const projects: Project[] = [
   },
 
   {
-    slug: "localych",
+    slug: "локалыч",
     title: "Локалыч",
     short: "Мобильное приложение и сайт",
     cover: "img/localych/9.webp",
@@ -569,7 +569,7 @@ export const projects: Project[] = [
   },
 
   {
-    slug: "arzamas",
+    slug: "арзамас",
     title: "Музей пожарной охраны Арзамаса",
     short: "Экспозиция; стиль; полиграфия; дизайн-проект; сопровождение",
     cover: "img/arzamas/0.png",
@@ -631,7 +631,7 @@ export const projects: Project[] = [
   },
 
   {
-    slug: "ecolant",
+    slug: "эколант",
     title: "HR-офис «Эколант»",
     short: "Дизайн интерьера",
     cover: "img/ecolant/0.png",

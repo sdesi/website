@@ -338,6 +338,7 @@ h2 {
   background: transparent;
   cursor: pointer;
   flex: 0 0 auto;
+  color: black !important;
 }
 
 /* Кнопка "Назад ко всем проектам" — ссылка, оформленная как кнопка */
